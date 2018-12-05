@@ -12,4 +12,5 @@ CREATE TABLE albums (
   id SERIAL4 PRIMARY KEY,
   name_of_album VARCHAR(255),
   year_released INT2
+  artist_id INT4 REFERENCES artists(id)
 );

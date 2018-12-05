@@ -1,10 +1,11 @@
 require('pg')
-# require_relative('../db/sql_runner')
+require_relative('../db/sql_runner')
 require_relative('album')
+
 
 class Artist
 
-  attr_accessor :first_name, :last_name, :age
+  attr_accessor :first_name, :last_name, :age, :album_id
   attr_reader :id
 
     def initialize(options)
@@ -12,8 +13,17 @@ class Artist
       @last_name = options['last_name']
       @age = options['age'].to_i
       @id = options['id'].to_i if options['id']
+      @album_id = options['album_id'].to_i
     end
 
+
+    def album
+      db = PG.connect({ dbname: 'music_library', host: 'localhost' })
+      sql = "SELECT * FROM albums WHERE id = $1"
+      values = [@album_id]
+      result = SqlRunner.run(sql, values)
+      return result.map {|album| Album.new(album)}
+    end
 
     def save()
       db = PG.connect({ dbname: 'music_library', host: 'localhost' })
@@ -46,7 +56,7 @@ class Artist
       db.prepare("all", sql)
       artists = db.exec_prepared("all")
       db.close
-      return artists
+      return artists.map { |artist| Artist.new(artist) }
     end
 
 
