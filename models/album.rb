@@ -17,24 +17,26 @@ class Album
 
   def artist()
     db = PG.connect({ dbname: 'music_library', host: 'localhost' })
+    sql = "SELECT * FROM artists WHERE id = $1"
     values = [@artist_id]
-    result = Sql.run(sql, values)
+    result = SqlRunner.run(sql, values)
     artist_hash = result[0]
-    return Artist.new(artist_hash)
+    return artist = Artist.new(artist_hash)
   end
 
-
+#forgot to add parameters for artist_id, which then didn't save the artist_id to the db
   def save()
     db = PG.connect({ dbname: 'music_library', host: 'localhost' })
     sql = "INSERT INTO albums (
       name_of_album,
-      year_released
+      year_released,
+      artist_id
     ) VALUES
     (
-      $1, $2
+      $1, $2, $3
     )
     RETURNING id"
-    values = [@name_of_album, @year_released]
+    values = [@name_of_album, @year_released, @artist_id]
     db.prepare("save", sql)
     @id = db.exec_prepared("save", values)[0]["id"].to_i
     db.close()

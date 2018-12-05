@@ -13,19 +13,18 @@ class Artist
       @last_name = options['last_name']
       @age = options['age'].to_i
       @id = options['id'].to_i if options['id']
-      @album_id = options['album_id'].to_i
     end
 
 
     def album
       db = PG.connect({ dbname: 'music_library', host: 'localhost' })
-      sql = "SELECT * FROM albums WHERE id = $1"
-      values = [@album_id]
+      sql = "SELECT * FROM albums WHERE artist_id = $1"
+      values = [@id]
       result = SqlRunner.run(sql, values)
       return result.map {|album| Album.new(album)}
     end
 
-    def save()
+    def save()              #this did me a confuzle -- why don't i have to add an extra parameter here?
       db = PG.connect({ dbname: 'music_library', host: 'localhost' })
       sql = "INSERT INTO artists (
         first_name,
