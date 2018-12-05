@@ -32,14 +32,22 @@ class Artist
       db.close()
     end
 
-    def self.delete_all()
+    def Artist.delete_all()
       db = PG.connect({ dbname: 'music_library', host: 'localhost' })
       sql = "DELETE FROM artists"
       db.prepare("delete_all", sql)
       db.exec_prepared("delete_all")
       db.close()
-end
+    end
 
+    def Artist.all()
+      db = PG.connect({ dbname: 'music_library', host: 'localhost' })
+      sql = "SELECT * FROM artists"
+      db.prepare("all", sql)
+      artists = db.exec_prepared("all")
+      db.close
+      return artists
+    end
 
 
 
